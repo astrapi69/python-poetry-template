@@ -1,7 +1,8 @@
 .DEFAULT_GOAL := help
 SHELL := /bin/bash
 
-SRC_DIRS := scripts/ tests/
+SRC_DIRS := src/ tests/
+PKG := python_poetry_template
 
 # ---------------------------------------------------------------------------
 # Setup
@@ -10,23 +11,19 @@ SRC_DIRS := scripts/ tests/
 .PHONY: lock-install
 lock-install: ## Lock and install project dependencies
 	poetry lock
-	poetry install
+	poetry install --with dev
 
 .PHONY: install
-install: ## Install project with all dependencies
-	poetry install
-
-.PHONY: install-dev
-install-dev: ## Install with dev dependencies
+install: ## Install project with dev dependencies
 	poetry install --with dev
 
 .PHONY: update
-update: ## Update dependencies
+update: ## Update dependencies to latest allowed versions
 	poetry update
 
 .PHONY: hooks
-hooks: ## Install pre-commit hooks
-	poetry run pre-commit install
+hooks: ## Install pre-commit + commit-msg hooks
+	poetry run pre-commit install --install-hooks
 
 # ---------------------------------------------------------------------------
 # Code Quality
@@ -38,19 +35,19 @@ lint: ## Run ruff linter
 
 .PHONY: lint-fix
 lint-fix: ## Run ruff linter with auto-fix
-	poetry run ruff check $(SRC_DIRS) --fix --unsafe-fixes
+	poetry run ruff check $(SRC_DIRS) --fix
 
 .PHONY: format
-format: ## Format code with black
-	poetry run black $(SRC_DIRS)
+format: ## Format code with ruff
+	poetry run ruff format $(SRC_DIRS)
 
 .PHONY: format-check
 format-check: ## Check formatting without changes
-	poetry run black --check $(SRC_DIRS)
+	poetry run ruff format --check $(SRC_DIRS)
 
 .PHONY: typecheck
-typecheck: ## Run MyPy type checks
-	poetry run mypy scripts/
+typecheck: ## Run mypy type checks
+	poetry run mypy $(SRC_DIRS)
 
 .PHONY: codespell
 codespell: ## Run codespell
@@ -61,13 +58,13 @@ codespell-fix: ## Run codespell with auto-fix
 	poetry run codespell $(SRC_DIRS) --write-changes
 
 .PHONY: precommit
-precommit: ## Run all pre-commit hooks
+precommit: ## Run all pre-commit hooks on all files
 	poetry run pre-commit run -a
 
 .PHONY: fix
-fix: ## Run all auto-fixes (ruff + black)
-	poetry run ruff check $(SRC_DIRS) --fix --unsafe-fixes
-	poetry run black $(SRC_DIRS)
+fix: ## Run all auto-fixes (ruff lint + format)
+	poetry run ruff check $(SRC_DIRS) --fix
+	poetry run ruff format $(SRC_DIRS)
 
 # ---------------------------------------------------------------------------
 # Tests
@@ -87,18 +84,18 @@ test-fast: ## Run tests without coverage (faster)
 
 .PHONY: test-cov
 test-cov: ## Run tests with coverage report
-	poetry run pytest --cov=scripts --cov-report=term-missing
+	poetry run pytest --cov=$(PKG) --cov-report=term-missing
 
 .PHONY: test-xml
 test-xml: ## Run tests with XML coverage (for CI)
-	poetry run pytest -q --maxfail=1 --disable-warnings --cov=scripts --cov-report=xml
+	poetry run pytest -q --maxfail=1 --disable-warnings --cov=$(PKG) --cov-report=xml
 
 # ---------------------------------------------------------------------------
 # CI
 # ---------------------------------------------------------------------------
 
 .PHONY: ci
-ci: lint format-check test ## Full CI pipeline (lint + format-check + test)
+ci: lint format-check typecheck test ## Full CI pipeline (lint + format + types + test)
 
 # ---------------------------------------------------------------------------
 # Version Management
@@ -133,24 +130,13 @@ publish-test: ci build ## Run CI, build and publish to TestPyPI
 	poetry publish -r testpypi
 
 # ---------------------------------------------------------------------------
-# Git
-# ---------------------------------------------------------------------------
-
-.PHONY: git-setup
-git-setup: ## Configure git hooks and commit template
-	git config core.hooksPath .githooks
-	git config commit.template .gitmessage
-	chmod +x .githooks/*
-	@echo "Git hooks and commit template activated."
-
-# ---------------------------------------------------------------------------
 # Cleanup
 # ---------------------------------------------------------------------------
 
 .PHONY: clean
 clean: ## Remove build artifacts and caches
 	rm -rf dist/ build/ .pytest_cache/ .ruff_cache/ .mypy_cache/ .coverage coverage.xml htmlcov/
-	find scripts/ tests/ -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+	find src/ tests/ -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	find . -name '*.pyc' -delete
 
 .PHONY: clean-venv
