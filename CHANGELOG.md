@@ -9,7 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Enforced PyPI release gate: `make build-check` (build + `twine check` + wheel
+  inspection), `make release-check` (CI + codespell + build-check), and
+  `make publish-test`. `publish`/`publish-test` run `release-check` as a hard
+  prerequisite, so a red check blocks publishing.
+- Release SOP at `.claude/rules/release-workflow.md` (SemVer rules, CHANGELOG
+  step, TestPyPI smoke test, checklist) and this `CHANGELOG.md` scaffold.
+- Registered pytest `slow` marker (paired with `--strict-markers`).
+- Roadmap for deliberately deferred work at `docs/ROADMAP.md`.
+
 ### Changed
+
+- Bumped GitHub Actions to their Node 24 majors — `actions/checkout@v7`,
+  `actions/setup-python@v6`, `codecov/codecov-action@v7` — clearing the
+  Node 20 deprecation warning. CI verified green across Python 3.10–3.14.
 
 ### Fixed
 
