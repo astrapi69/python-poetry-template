@@ -24,7 +24,9 @@ dependencies = []
 [project.urls]
 Homepage = "https://github.com/astrapi69/python-poetry-template"
 Repository = "https://github.com/astrapi69/python-poetry-template"
-Issues = "https://github.com/astrapi69/python-poetry-template/issues"
+Documentation = "https://github.com/astrapi69/python-poetry-template#readme"
+Changelog = "https://github.com/astrapi69/python-poetry-template/blob/main/CHANGELOG.md"
+"Issue Tracker" = "https://github.com/astrapi69/python-poetry-template/issues"
 
 [project.scripts]
 template-script = "python_poetry_template.cli:main"
@@ -40,6 +42,7 @@ pytest = "^9.1.0"
 pytest-cov = "^7.1.0"
 pytest-mock = "^3.15.0"
 codespell = "^2.4.0"
+twine = "^6.2.0"
 
 [build-system]
 requires = ["poetry-core>=2.0"]
@@ -84,6 +87,9 @@ files = ["src", "tests"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--cov=python_poetry_template --cov-report=term-missing --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
 
 [tool.coverage.run]
 source = ["python_poetry_template"]

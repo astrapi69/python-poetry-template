@@ -30,6 +30,12 @@ starter, the package `python_poetry_template` is renamed to the new project's na
 - **Tests:** every new public function should have a test; keep coverage meaningful.
 - **Python:** target 3.10+; CI verifies 3.10 – 3.14.
 
+## Releasing to PyPI
+
+Follow [`.claude/rules/release-workflow.md`](.claude/rules/release-workflow.md)
+— the mandatory step-by-step SOP (SemVer, CHANGELOG, TestPyPI smoke test,
+checklist). Gate: `make release-check`. Track changes in `CHANGELOG.md`.
+
 ## When renaming the package
 
 Update the package directory, then `name` / `[project.scripts]` /

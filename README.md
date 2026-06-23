@@ -101,6 +101,25 @@ Run `make help` to see all available targets:
 
 ---
 
+## Publishing to PyPI
+
+This template is ready to ship as a library. The full, battle-tested
+release process lives in
+[`.claude/rules/release-workflow.md`](.claude/rules/release-workflow.md)
+(SemVer rules, CHANGELOG, TestPyPI smoke test, checklist). The short version:
+
+```bash
+make release-check     # CI + codespell + build + twine check (the pre-release gate)
+make publish-test      # upload to TestPyPI and smoke-install first
+make publish           # gated build + upload to PyPI (irreversible)
+```
+
+Version bumps go through `poetry version <patch|minor|major>`; `__version__`
+is derived from the installed metadata, so it never drifts. Changes are tracked
+in [CHANGELOG.md](CHANGELOG.md) ([Keep a Changelog](https://keepachangelog.com/)).
+
+---
+
 ## Project Structure
 
 ```text
