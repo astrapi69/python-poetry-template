@@ -124,14 +124,19 @@ in [CHANGELOG.md](CHANGELOG.md) ([Keep a Changelog](https://keepachangelog.com/)
 
 ```text
 python-poetry-template/
-├── .github/workflows/ci.yml   # GitHub Actions CI (Python 3.10–3.14)
+├── .claude/rules/
+│   └── release-workflow.md    # Step-by-step PyPI release SOP
+├── .github/workflows/ci.yml   # GitHub Actions CI (Python 3.10–3.14, Node 24)
 ├── .pre-commit-config.yaml    # Pre-commit hook configuration
 ├── .env.example               # Environment variable template
+├── CHANGELOG.md               # Keep a Changelog history
 ├── LICENSE                    # MIT license
 ├── Makefile                   # Development task automation
 ├── pyproject.toml             # PEP 621 metadata + tool config
 ├── poetry.lock                # Exact version locks for reproducibility
 ├── README.md                  # You're reading it
+├── docs/
+│   └── ROADMAP.md             # Deliberately deferred work
 ├── src/
 │   └── python_poetry_template/
 │       ├── __init__.py        # Package version
@@ -141,6 +146,14 @@ python-poetry-template/
     ├── __init__.py
     └── test_example.py
 ```
+
+---
+
+## Roadmap
+
+Deliberately deferred work is tracked in [docs/ROADMAP.md](docs/ROADMAP.md) —
+currently an optional OIDC / Trusted Publishing migration and a backport of the
+tooling improvements to related projects.
 
 ---
 
